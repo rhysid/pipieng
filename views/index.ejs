@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Kalkulator Piping</title>
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --success: #10b981;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Header Styling */
+    header {
+      text-align: center;
+      padding: 1.5rem 0 0.5rem;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(to right, #60a5fa, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Layout Grid */
+    .app-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 992px) {
+      .app-grid {
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+      }
+    }
+
+    /* Card Styling */
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #e2e8f0;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 0.75rem;
+    }
+
+    /* Form & Input Styling */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      background-color: #0f172a;
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 0.875rem 1rem;
+      font-size: 1rem;
+      border-radius: 0.6rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+    }
+
+    /* Table Styling */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: 0.6rem;
+      border: 1px solid var(--card-border);
+      margin-bottom: 1.25rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background-color: #0f172a;
+      color: var(--text-muted);
+      padding: 0.875rem 1rem;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 0.75rem 1rem;
+      border-top: 1px solid var(--card-border);
+      background-color: #1a2436;
+    }
+
+    td input {
+      padding: 0.6rem 0.8rem;
+    }
+
+    /* Button Styling */
+    .btn {
+      width: 100%;
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      padding: 1rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.39);
+      transition: all 0.2s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+      background-color: var(--accent-hover);
+    }
+
+    /* Result Display Styling */
+    .summary-card {
+      background: linear-gradient(135deg, #1e3a8a, #1e293b);
+      border: 1px solid #3b82f6;
+      border-radius: 0.75rem;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .summary-title {
+      font-size: 0.9rem;
+      color: #93c5fd;
+    }
+
+    .summary-value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .result-item {
+      background-color: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 0.75rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .result-item-header {
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .result-detail {
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      margin-top: 0.25rem;
+      word-break: break-all;
+    }
+
+    .badge-waste {
+      background-color: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.4rem;
+      font-size: 0.8rem;
+    }
+
+    .badge-used {
+      background-color: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.4rem;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>KALKULATOR PIPING</h1>
+      <p>by.Risqy Ananto(ESG2)</p>
+    </header>
+
+    <div class="app-grid">
+      <!-- PANEL INPUT -->
+      <div class="card">
+        <div class="card-title">⚙️ Parameter & Ukuran</div>
+        
+        <form action="/hitung" method="POST">
+          <div class="form-group">
+            <label for="totalPanjang">Panjang Kain (inch)</label>
+            <input type="number" step="any" id="totalPanjang" name="totalPanjang" value="<%= typeof totalPanjang !== 'undefined' ? totalPanjang : 80 %>" required>
+          </div>
+
+          <label>Daftar Bagian Potongan</label>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 30%;">Bagian</th>
+                  <th style="width: 45%;">Panjang (in)</th>
+                  <th style="width: 25%;">Qty</th>
+                </tr>
+              </thead>
+              <tbody id="containerBagian">
+                <tr>
+                  <td>Bagian 1</td>
+                  <td><input type="number" step="any" name="potongan" class="input-potongan" placeholder="Misal: 40" oninput="cekDanTambahBaris(this)"></td>
+                  <td><input type="number" name="jumlah" value="1" min="1"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <button type="submit" class="btn">PROSES PEMOTONGAN</button>
+        </form>
+      </div>
+
+      <!-- PANEL HASIL -->
+      <div class="card">
+        <div class="card-title">📊 Hasil Optimal Pemotongan</div>
+
+        <% if (hasil) { %>
+          <div class="summary-card">
+            <div>
+              <div class="summary-title">Total Pot Kain Dibutuhkan</div>
+              <div class="summary-value"><%= hasil.length %> Potong</div>
+            </div>
+            <div style="text-align: right;">
+              <div class="summary-title">Ukuran Standar</div>
+              <div class="summary-value" style="color: #60a5fa;"><%= totalPanjang %>"</div>
+            </div>
+          </div>
+
+          <% hasil.forEach((tali, idx) => { %>
+            <div class="result-item">
+              <div class="result-item-header">
+                <span>Pot Piping Ke-<%= idx + 1 %></span>
+                <span class="badge-used">Terpakai: <%= tali.potongan.reduce((a, b) => a + b, 0) %>"</span>
+              </div>
+              <div class="result-detail">
+                <strong>Rincian Potongan:</strong> <%= tali.potongan.join(' inch + ') %> inch
+              </div>
+              <div class="result-detail" style="margin-top: 0.5rem;">
+                <span class="badge-waste">Sisa (Waste): <%= tali.sisa %> inch</span>
+              </div>
+            </div>
+          <% }) %>
+
+        <% } else { %>
+          <div style="text-align: center; color: var(--text-muted); padding: 3rem 1rem;">
+            <p style="font-size: 3rem; margin-bottom: 1rem;">📐</p>
+            <p>Masukkan ukuran Piping dan bagian potongan di sebelah kiri, lalu klik <strong>PROSES PEMOTONGAN</strong> untuk melihat hasil alokasi paling efisien.</p>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let counterBagian = 1;
+
+    function cekDanTambahBaris(inputEl) {
+      const tr = inputEl.closest('tr');
+      const container = document.getElementById('containerBagian');
+      
+      // Jika baris yang diisi adalah baris terakhir, tambah baris baru
+      if (tr === container.lastElementChild && inputEl.value.trim() !== '') {
+        counterBagian++;
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+          <td>Bagian ${counterBagian}</td>
+          <td><input type="number" step="any" name="potongan" class="input-potongan" placeholder="Panjang" oninput="cekDanTambahBaris(this)"></td>
+          <td><input type="number" name="jumlah" value="1" min="1"></td>
+        `;
+        container.appendChild(newRow);
+      }
+    }
+  </script>
+
+</body>
+</html>
